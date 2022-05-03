@@ -66,7 +66,7 @@ class NavigationNode:
             # robot. Add code here to make your robot move in a square of
             # dimensions 0.5x0.5m...
             
-            self.ObstacleDirection = 270
+            self.ObstacleDirection = len(self.Ranges)
             # Find nearest obstacle from ranges
             for i in range(len(self.Ranges)):
                 if(self.Ranges[i] < .75):
@@ -75,19 +75,21 @@ class NavigationNode:
             self.ObstacleDirection+=720
             self.ObstacleDirection%=360
 
-            if self.ObstacleDirection > 210 and self.ObstacleDirection < 330:
-                self.vel.linear.x = .1
-                self.vel.angular.z = 0
-            elif self.ObstacleDirection > 330 and self.ObstacleDirection < 90:
+            self.vel.linear.x = .1
+            self.vel.angular.z = 0
+
+            if self.ObstacleDirection > 330 or self.ObstacleDirection < 90:
+                print(f" Wants to turn right")
                 self.vel.linear.x = 0
                 self.vel.angular.z = .4
             elif self.ObstacleDirection > 90 and self.ObstacleDirection < 210:
+                print(f" Wants to turn left")
                 self.vel.linear.x = 0
                 self.vel.angular.z = -0.4
             
             # publish whatever velocity command has been set in your code above:
             self.pub.publish(self.vel)
-            print(f" i = {self.ObstacleDirection}, val = {self.Ranges[self.ObstacleDirection]}")
+            print(f" i = {self.ObstacleDirection}")
             self.rate.sleep()
 
 if __name__ == '__main__':
