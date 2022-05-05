@@ -6,7 +6,9 @@ https://github.com/ROBOTIS-GIT/turtlebot3/blob/master/turtlebot3_navigation/laun
   <include file="$(find com2009_simulations)/launch/nav_world.launch" />
 
   <!-- Turtlebot3 SLAM -->
-  <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" />
+  <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" >
+    <arg name="open_rviz" value="false"/>
+  </include>
 
   <!-- Initialization -->
   <!-- <arg name="map_file" default=" $(find week2_navi)/maps/incomplete.yaml"/> -->
@@ -38,6 +40,6 @@ https://github.com/ROBOTIS-GIT/turtlebot3/blob/master/turtlebot3_navigation/laun
   </include>
 
   <!-- rviz -->
-  <!-- <node pkg="rviz" type="rviz" name="rviz" required="true"
-    args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/> -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+    args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
 </launch>
