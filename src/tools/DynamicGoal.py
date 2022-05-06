@@ -20,10 +20,14 @@ import numpy as np
 # - yaw: Euler yaw angle whose range is [-pi, pi]. yaw will less than 0 if the 
 #   direction vector can be got by rotating Y axis anti-clockwise, vice versa.
 ## To-Do:
-# [ ]. Figure out the relationship between quarternion and Euler yaw angle
-# [ ]. Make sure that the yaw is updated right visually
+# [x]. Figure out the relationship between quarternion and Euler yaw angle
+# [x]. Make sure that the yaw is updated right visually
 def updateOrientation(goalPos, currPos):
     yaw = atan2(goalPos[0]-currPos[0], goalPos[1]-currPos[1]) - atan2(0,1)
+    if yaw > 0:
+        yaw = 2*pi - yaw
+    elif yaw < 0:
+        yaw = yaw + pi
     return yaw
 
 
