@@ -43,10 +43,8 @@ def updateOrientation(goalPos, currPos):
 ## To-Do:
 # [ ]. More visualization tests are needed. 
 # [ ]. Remove all debugging-purpose 'print' lines after testing fully
-def updateGoal(goalPos, currPos, costmap, boxsize, res):
-    costmap = np.array(costmap)
-    h = costmap.shape[0]
-    w = costmap.shape[1]
+def updateGoal(goalPos, currPos, costmap, h, w, boxsize, res):
+    costmap = np.array(costmap).reshape((h,w))
     
     rot = np.matrix([[0.0, -1.0, 0.0], 
                      [1.0, 0.0, 0.0],
