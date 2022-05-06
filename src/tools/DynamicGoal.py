@@ -2,7 +2,7 @@
 Description: Provide functions for updating goal online
 Author: Yi Lan (ylan12@sheffield.ac.uk)
 Date: 2022-05-05 15:14:58
-LastEditTime: 2022-05-06 11:45:29
+LastEditTime: 2022-05-06 12:28:07
 LastEditors: Yi Lan (ylan12@sheffield.ac.uk)
 '''
 
@@ -21,6 +21,7 @@ import numpy as np
 #   direction vector can be got by rotating Y axis anti-clockwise, vice versa.
 ## To-Do:
 # [ ]. Figure out the relationship between quarternion and Euler yaw angle
+# [ ]. Make sure that the yaw is updated right visually
 def updateOrientation(goalPos, currPos):
     yaw = atan2(goalPos[0]-currPos[0], goalPos[1]-currPos[1]) - atan2(0,1)
     return yaw
