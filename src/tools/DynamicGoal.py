@@ -14,11 +14,10 @@ import numpy as np
 #   position of robot and goal position for avoiding orientation adjusting when
 #   the robot has arrived goal posttion.
 ## Params:
-# - goalPos: a list containing the coordinate of goal position
-# - currPos: a list containing the coordinate of current position
+# - goalPos(float32[]): a list containing the coordinate of goal position
+# - currPos(float32[]): a list containing the coordinate of current position
 ## Returns:
-# - yaw: Euler yaw angle whose range is [-pi, pi]. yaw will less than 0 if the 
-#   direction vector can be got by rotating Y axis anti-clockwise, vice versa.
+# - yaw: Eular yaw angle in a range of [0, 2*pi) as anti-clockwise
 ## To-Do:
 # [x]. Figure out the relationship between quarternion and Euler yaw angle
 # [x]. Make sure that the yaw is updated right visually
@@ -34,18 +33,18 @@ def updateOrientation(goalPos, currPos):
 ## Discription: this function updates the goal position for preventing previous
 #   desired position is unreachable
 ## Params:
-# - goalPos: coordinate of desired position (meter in world coord system)
-# - currPos: coordinate of current position (meter in world coord system)
-# - costmap: local cost matrix in a format as np.ndarray in np.uint8
-# - boxsize: size of searching box (cell)
-# - res: resolution of costmap (m/cell)
+# - goalPos(float32[]): coordinate of desired position (meter in world coord system)
+# - currPos(float32[]): coordinate of current position (meter in world coord system)
+# - costmap(uint8[]): local cost matrix in a format as np.ndarray in np.uint8
+# - boxsize(uint): size of searching box (cell)
+# - res(float32): resolution of costmap (m/cell)
 ## Returns:
 # - a list contains the coordinate of new goal position in world system (m)
 ## To-Do:
 # [ ]. More visualization tests are needed. 
 # [ ]. Remove all debugging-purpose 'print' lines after testing fully
 def updateGoal(goalPos, currPos, costmap, boxsize, res):
-
+    costmap = np.array(costmap)
     h = costmap.shape[0]
     w = costmap.shape[1]
     
@@ -106,10 +105,10 @@ def updateGoal(goalPos, currPos, costmap, boxsize, res):
 #   area of costmap for selecting a reachable position closing to desired posi-
 #   tion as possible
 ## Params:
-# - boxsize: size of penalty matrix
-# - w: weight, a hyper-parameter for controlling how strong this penalty is
+# - boxsize(uint): size of penalty matrix
+# - w(uint): weight, a hyper-parameter for controlling how strong this penalty is
 ## Returns:
-# - a distance penalty square matrix
+# - a distance penalty square matrix as a numpy array
 def genDistPenalty(boxsize, w=1):
     distPenalty = np.zeros((boxsize, boxsize), dtype=np.float32)
     for x in range(0, boxsize):
