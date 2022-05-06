@@ -69,7 +69,7 @@ class NavigationNode:
             self.ObstacleDirection = len(self.Ranges)
             # Find nearest obstacle from ranges
             for i in range(len(self.Ranges)):
-                if(self.Ranges[i] < .75):
+                if(self.Ranges[i] < .5):
                     self.ObstacleDirection = i
 
             self.ObstacleDirection+=720
@@ -78,7 +78,10 @@ class NavigationNode:
             self.vel.linear.x = .1
             self.vel.angular.z = 0
 
-            if self.ObstacleDirection > 330 or self.ObstacleDirection < 90:
+            if self.ObstacleDirection == 0:
+                self.vel.linear.x = .1
+                self.vel.angular.z = 0
+            elif self.ObstacleDirection > 330 or self.ObstacleDirection < 90:
                 print(f" Wants to turn right")
                 self.vel.linear.x = 0
                 self.vel.angular.z = .4
@@ -89,7 +92,7 @@ class NavigationNode:
             
             # publish whatever velocity command has been set in your code above:
             self.pub.publish(self.vel)
-            print(f" i = {self.ObstacleDirection}")
+            print(f" i = {self.ObstacleDirection}, length = {len(self.Ranges)}")
             self.rate.sleep()
 
 if __name__ == '__main__':
