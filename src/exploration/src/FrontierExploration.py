@@ -5,10 +5,8 @@ import rospy
 import actionlib
 from visualization_msgs.msg import Marker
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-# importing the message types for the action server
-from exploration.msg import explorationFeedback, explorationResult, explorationGoal, explorationAction
 # import the Twist message for publishing velocity commands:
-from geometry_msgs.msg import Twist, Point, Vector3, Transform
+from geometry_msgs.msg import Point
 from tf2_msgs.msg import TFMessage
 # import the Odometry message for subscribing to the odom topic:
 from nav_msgs.msg import OccupancyGrid
