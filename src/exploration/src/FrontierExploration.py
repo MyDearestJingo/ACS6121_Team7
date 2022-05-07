@@ -8,7 +8,8 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 # importing the message types for the action server
 from exploration.msg import explorationFeedback, explorationResult, explorationGoal, explorationAction
 # import the Twist message for publishing velocity commands:
-from geometry_msgs.msg import Twist, Point, PoseWithCovarianceStamped
+from geometry_msgs.msg import Twist, Point, Vector3, Transform
+from tf2_msgs.msg import TFMessage
 # import the Odometry message for subscribing to the odom topic:
 from nav_msgs.msg import OccupancyGrid
 # Helper functions for frontiers
@@ -48,10 +49,15 @@ class ExplorationNode:
         if(bFoundFrontier):
             print(f"Moving to: {Frontiers[0].CentroidX}, {Frontiers[0].CentroidY} from: {self.CurrentPose}")
             self.SetGoal(Frontiers[0].CentroidX, Frontiers[0].CentroidY)
+        else:
+            print(f"No new frontier found.")
+            
 
-    def PoseListener(self, Pose :PoseWithCovarianceStamped):
-        self.CurrentPose = Pose.pose.pose.position
-        print(f"Recieved a pose update. New pose = {Pose.pose.pose.position}")
+    def PoseListener(self, Transforms :TFMessage):
+        for Transform in Transforms.transforms:
+            if Transform.header.frame_id == "odom":
+                self.CurrentPose = Transform.transform.translation
+        
 
     def __init__(self):
         self.NodeName = "ExplorerAS"
@@ -63,8 +69,9 @@ class ExplorationNode:
         self.MoveBaseClient.wait_for_server()
 
         # setup publishers and subscribers:
-        self.sub = rospy.Subscriber("map", OccupancyGrid, self.MapUpdateListener)
-        self.sub = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped, self.PoseListener)
+        self.MarkerPub = rospy.Publisher("visualization_marker", Marker)
+        self.MapSub = rospy.Subscriber("map", OccupancyGrid, self.MapUpdateListener)
+        self.PoseSub = rospy.Subscriber("tf", TFMessage, self.PoseListener)
 
         self.CurrentPose = Point()
 
@@ -111,7 +118,7 @@ class ExplorationNode:
                     frontier_flag[nbr] = True
                     NewFrontier = FH.BuildNewFrontier(nbr, pos, frontier_flag, self.Map)
                     if (NewFrontier.Size >= 10):
-                        print(f"Centroid of Frontier = {NewFrontier.CentroidX}, {NewFrontier.CentroidY}, size = {NewFrontier.Size}")
+                        print(f"Centroid of new Frontier = {NewFrontier.CentroidX}, {NewFrontier.CentroidY}, size = {NewFrontier.Size}")
                         FrontierList.append(NewFrontier)
 
         # set costs of frontiers and sort based on cost
@@ -133,6 +140,10 @@ class ExplorationNode:
 
         self.MoveBaseClient.cancel_all_goals()
         self.MoveBaseClient.send_goal(goal)
+
+        marker = Marker()
+        marker.pose.position = goal.target_pose.pose.position
+        self.MarkerPub.publish(marker)
 
     # handles shutdown procedure
     def shutdownhook(self):
