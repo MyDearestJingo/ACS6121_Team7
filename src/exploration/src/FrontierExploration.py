@@ -6,7 +6,7 @@ import actionlib
 from visualization_msgs.msg import Marker
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 # import the Twist message for publishing velocity commands:
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Twist, Point, Vector3, Transform
 from tf2_msgs.msg import TFMessage
 # import the Odometry message for subscribing to the odom topic:
 from nav_msgs.msg import OccupancyGrid
@@ -49,14 +49,12 @@ class ExplorationNode:
             self.SetGoal(Frontiers[0].CentroidX, Frontiers[0].CentroidY)
         else:
             print(f"No new frontier found.")
-            
 
     def PoseListener(self, Transforms :TFMessage):
         for Transform in Transforms.transforms:
             if Transform.header.frame_id == "odom":
                 self.CurrentPose = Transform.transform.translation
         
-
     def __init__(self):
         self.NodeName = "ExplorerAS"
         rospy.init_node(self.NodeName, anonymous=True)
@@ -110,7 +108,7 @@ class ExplorationNode:
             # add to queue all free, unvisited cells, use descending search in case initialized on non-free cell
                 if (self.Map.data[nbr] <= self.Map.data[Index] and not visited_flag[nbr]):
                     visited_flag[nbr] = True
-                    BFS.append(nbr);
+                    BFS.append(nbr)
                     # check if cell is new frontier cell (unvisited, NO_INFORMATION, free neighbour)
                 elif (FH.IsNewFrontierPoint(nbr, self.Map, frontier_flag)):
                     frontier_flag[nbr] = True
@@ -125,7 +123,6 @@ class ExplorationNode:
         FrontierList.sort(key = lambda x: x.Cost)
 
         return len(FrontierList) > 0, FrontierList
-
         
     # cancels all previous goals to move_base and sets the new goal
     def SetGoal(self, PosX, PosY):
