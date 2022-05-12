@@ -73,7 +73,7 @@ def IsNewFrontierPoint(Index, MapData :OccupancyGrid, FrontierFlags):
     return False
 
 def FrontierCost(frontier :Frontier, Map :OccupancyGrid):
-    return (frontier.MinDist * Map.info.resolution) - (frontier.Size * Map.info.resolution * 1000) # Frontier size is more important
+    return (frontier.MinDist * Map.info.resolution) - (frontier.Size * Map.info.resolution)
 
 def BuildNewFrontier(StartCell, Reference, frontier_flag, Map: OccupancyGrid):
     # initialize frontier structure
@@ -169,5 +169,5 @@ def MapToWorld(MapX, MapY, Map :OccupancyGrid):
 
 def IndexToCells(Index, MapData :OccupancyGrid):
     Mx = Index % MapData.info.width
-    My = Index % MapData.info.height
+    My = int(Index / MapData.info.width) + 1
     return Mx, My

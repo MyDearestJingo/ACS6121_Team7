@@ -3,7 +3,6 @@
 
 import rospy
 import actionlib
-from visualization_msgs.msg import Marker
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 # import the Twist message for publishing velocity commands:
 from geometry_msgs.msg import Twist, Point, Vector3, Transform
@@ -49,6 +48,7 @@ class ExplorationNode:
             self.SetGoal(Frontiers[0].CentroidX, Frontiers[0].CentroidY)
         else:
             print(f"No new frontier found.")
+            self.MoveBaseClient.cancel_all_goals()
 
     def PoseListener(self, Transforms :TFMessage):
         for Transform in Transforms.transforms:
@@ -65,7 +65,6 @@ class ExplorationNode:
         self.MoveBaseClient.wait_for_server()
 
         # setup publishers and subscribers:
-        self.MarkerPub = rospy.Publisher("visualization_marker", Marker)
         self.MapSub = rospy.Subscriber("map", OccupancyGrid, self.MapUpdateListener)
         self.PoseSub = rospy.Subscriber("tf", TFMessage, self.PoseListener)
 
@@ -135,10 +134,6 @@ class ExplorationNode:
 
         self.MoveBaseClient.cancel_all_goals()
         self.MoveBaseClient.send_goal(goal)
-
-        marker = Marker()
-        marker.pose.position = goal.target_pose.pose.position
-        self.MarkerPub.publish(marker)
 
     # handles shutdown procedure
     def shutdownhook(self):
